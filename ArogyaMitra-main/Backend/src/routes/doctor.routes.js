@@ -36,18 +36,18 @@ router.use(verifyJWT);
 router.use(authorizeRoles('ADMIN', 'AROGYA_SEVAK', 'SEVAK'));
 
 // POST /api/doctors - Register / add a new doctor
-router.post('/', createDoctor);
+router.post('/', verifyJWT, authorizeRoles('ADMIN'), createDoctor);
 
 // PUT /api/doctors/:id - Update full doctor details & schedule
-router.put('/:id', updateDoctor);
+router.put('/:id', verifyJWT, authorizeRoles('ADMIN'), updateDoctor);
 
 // PATCH /api/doctors/:id/availability - Quick 1-click live availability update
-router.patch('/:id/availability', updateDoctorAvailability);
+router.patch('/:id/availability', verifyJWT, updateDoctorAvailability);
 
 // PATCH /api/doctors/:id/toggle-status - Toggle active/deactivated status
-router.patch('/:id/toggle-status', toggleDoctorActive);
+router.patch('/:id/toggle-status', verifyJWT, authorizeRoles('ADMIN'), toggleDoctorActive);
 
 // DELETE /api/doctors/:id - Delete doctor record
-router.delete('/:id', deleteDoctor);
+router.delete('/:id', verifyJWT, authorizeRoles('ADMIN'), deleteDoctor);
 
 export default router;

@@ -11,9 +11,9 @@ router.use(verifyJWT);
 router.use(authorizeRoles('ADMIN', 'AROGYA_SEVAK', 'SEVAK'));
 
 // 1) GET /api/daily-updates - Retrieve daily update KPIs, history, and today's shift details
-router.get('/', getDailyUpdates);
+router.get('/', verifyJWT, getDailyUpdates);
 
 // 2) POST /api/daily-updates - Submit a new daily shift report
-router.post('/', submitDailyUpdate);
+router.post('/', verifyJWT, submitDailyUpdate);
 
 export default router;

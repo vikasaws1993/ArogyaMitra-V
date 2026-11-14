@@ -1,3 +1,4 @@
+import { verifyJWT, authorizeRoles } from '../middlewares/auth.middleware.js';
 import { Router } from 'express';
 import { packageMasterController } from '../controllers/packageMaster.controller.js';
 
@@ -25,7 +26,7 @@ router.get('/specialties', packageMasterController.getSpecialtiesList);
  * @route   POST /api/packages/upload-csv
  * @desc    Upload CSV text/data with Specialty, Specialty Code, Procedure Code, Procedure Name
  */
-router.post('/upload-csv', packageMasterController.uploadCsv);
+router.post('/upload-csv', verifyJWT, authorizeRoles('ADMIN'), packageMasterController.uploadCsv);
 
 /**
  * @route   GET /api/packages
@@ -37,18 +38,18 @@ router.get('/', packageMasterController.getAllPackages);
  * @route   POST /api/packages
  * @desc    Create a single procedure
  */
-router.post('/', packageMasterController.createPackage);
+router.post('/', verifyJWT, authorizeRoles('ADMIN'), packageMasterController.createPackage);
 
 /**
  * @route   PUT /api/packages/:id
  * @desc    Update a single procedure
  */
-router.put('/:id', packageMasterController.updatePackage);
+router.put('/:id', verifyJWT, authorizeRoles('ADMIN'), packageMasterController.updatePackage);
 
 /**
  * @route   DELETE /api/packages/:id
  * @desc    Delete a single procedure
  */
-router.delete('/:id', packageMasterController.deletePackage);
+router.delete('/:id', verifyJWT, authorizeRoles('ADMIN'), packageMasterController.deletePackage);
 
 export default router;

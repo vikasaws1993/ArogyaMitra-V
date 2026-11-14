@@ -1,3 +1,4 @@
+import { verifyJWT } from '../middlewares/auth.middleware.js';
 import { Router } from 'express';
 import {
   registerCitizen,
@@ -53,12 +54,12 @@ router.get('/alerts', optionalAuth, getCitizenAlerts);
 router.get('/profile', optionalAuth, getCitizenProfile);
 
 // GET /api/citizens/mobile/:mobile - Get profile by mobile number
-router.get('/mobile/:mobile', getCitizenByMobile);
+router.get('/mobile/:mobile', verifyJWT, getCitizenByMobile);
 
 // GET /api/citizens/user/:userId - Get profile by user_id
-router.get('/user/:userId', getCitizenProfile);
+router.get('/user/:userId', verifyJWT, getCitizenProfile);
 
 // GET /api/citizens/:id - Get profile by citizen UUID
-router.get('/:id', getCitizenById);
+router.get('/:id', verifyJWT, getCitizenById);
 
 export default router;

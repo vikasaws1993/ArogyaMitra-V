@@ -16,6 +16,6 @@ router.get('/', getHospitalFacilities);
 router.get('/my-hospital', getHospitalFacilities);
 
 // 2) POST /api/hospital-facilities
-router.post('/', saveHospitalFacilities);
+router.post('/', verifyJWT, saveHospitalFacilities);
 
 export default router;

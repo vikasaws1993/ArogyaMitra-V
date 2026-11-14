@@ -101,9 +101,9 @@ router.post('/notifications/send', verifyJWT, authorizeRoles('ADMIN', 'AROGYA_SE
 router.post('/notifications/broadcast', verifyJWT, authorizeRoles('ADMIN'), broadcastNotification);
 
 // GET /api/mob/mobile/:mobile - Get Citizen by Mobile
-router.get('/mobile/:mobile', getCitizenByMobile);
+router.get('/mobile/:mobile', verifyJWT, getCitizenByMobile);
 
 // GET /api/mob/:id - Get Citizen by ID
-router.get('/:id', getCitizenById);
+router.get('/:id', verifyJWT, getCitizenById);
 
 export default router;
