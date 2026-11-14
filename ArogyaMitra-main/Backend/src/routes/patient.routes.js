@@ -4,23 +4,23 @@ import {
   getPatientById,
   updatePatient,
 } from '../controllers/patient.controller.js';
-import { optionalJWT } from '../middlewares/auth.middleware.js';
+import { verifyJWT, authorizeRoles } from '../middlewares/auth.middleware.js';
 
 const router = Router();
 
 // GET /api/patients/assigned - Get all patients assigned to Arogya Sevak from Admin
-router.get('/assigned', optionalJWT, getAssignedPatients);
+router.get('/assigned', verifyJWT, authorizeRoles('ADMIN', 'AROGYA_SEVAK'), getAssignedPatients);
 
 // GET /api/patients - Alias for assigned patients list
-router.get('/', optionalJWT, getAssignedPatients);
+router.get('/', verifyJWT, authorizeRoles('ADMIN', 'AROGYA_SEVAK'), getAssignedPatients);
 
 // GET /api/patients/:id - Get patient details by Case ID (e.g. AM-2026-00124)
-router.get('/:id', optionalJWT, getPatientById);
+router.get('/:id', verifyJWT, authorizeRoles('ADMIN', 'AROGYA_SEVAK'), getPatientById);
 
 // PATCH /api/patients/:id - Update patient status, ward, clinical notes
-router.patch('/:id', optionalJWT, updatePatient);
+router.patch('/:id', verifyJWT, authorizeRoles('ADMIN', 'AROGYA_SEVAK'), updatePatient);
 
 // PUT /api/patients/:id - Update patient
-router.put('/:id', optionalJWT, updatePatient);
+router.put('/:id', verifyJWT, authorizeRoles('ADMIN', 'AROGYA_SEVAK'), updatePatient);
 
 export default router;
