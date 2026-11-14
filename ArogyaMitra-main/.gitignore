@@ -48,3 +48,9 @@ scratch/
 **/scratch/
 .kotlin/
 **/.kotlin/
+
+commit
+commit.pub
+newone/
+*.pem
+id_rsa*
