@@ -57,15 +57,15 @@ router.post('/:id/escalate', verifyJWT, remindAdmin);
 // ==========================================
 
 // Arogya Sevak get assigned applications
-router.get('/sevak/assigned', optionalJWT, getSevakAssignedApplications);
-router.get('/sevak/my-cases', optionalJWT, getSevakAssignedApplications);
+router.get('/sevak/assigned', verifyJWT, authorizeRoles('ADMIN', 'AROGYA_SEVAK', 'SEVAK'), getSevakAssignedApplications);
+router.get('/sevak/my-cases', verifyJWT, authorizeRoles('ADMIN', 'AROGYA_SEVAK', 'SEVAK'), getSevakAssignedApplications);
 
 // Arogya Sevak upload requested clinical record / document (legacy/alternate)
-router.post('/:id/sevak-upload-doc', uploadSevakDocument);
+router.post('/:id/sevak-upload-doc', verifyJWT, authorizeRoles('ADMIN', 'AROGYA_SEVAK', 'SEVAK'), uploadSevakDocument);
 
 // Arogya Sevak / Admin update clinical treatment progress and live ward status
-router.put('/:id/treatment-progress', updateTreatmentProgress);
-router.patch('/:id/treatment-progress', updateTreatmentProgress);
+router.put('/:id/treatment-progress', verifyJWT, authorizeRoles('ADMIN', 'AROGYA_SEVAK', 'SEVAK'), updateTreatmentProgress);
+router.patch('/:id/treatment-progress', verifyJWT, authorizeRoles('ADMIN', 'AROGYA_SEVAK', 'SEVAK'), updateTreatmentProgress);
 
 // ==========================================
 // 3. Application Details & Documents
@@ -76,11 +76,11 @@ router.post('/:id/documents', verifyJWT, authorizeRoles('ADMIN', 'AROGYA_SEVAK',
 router.post('/case/:caseId/documents', verifyJWT, authorizeRoles('ADMIN', 'AROGYA_SEVAK', 'SEVAK', 'CITIZEN'), uploadApplicationDocument);
 
 // Get documents for an application (by Case ID or UUID)
-router.get('/:id/documents', getApplicationDocuments);
-router.get('/case/:caseId/documents', getApplicationDocuments);
+router.get('/:id/documents', verifyJWT, authorizeRoles('ADMIN', 'AROGYA_SEVAK', 'SEVAK', 'CITIZEN'), getApplicationDocuments);
+router.get('/case/:caseId/documents', verifyJWT, authorizeRoles('ADMIN', 'AROGYA_SEVAK', 'SEVAK', 'CITIZEN'), getApplicationDocuments);
 
 // Get single application details by Case ID or UUID
-router.get('/track/:id', optionalJWT, getApplicationById);
-router.get('/:id', optionalJWT, getApplicationById);
+router.get('/track/:id', verifyJWT, getApplicationById);
+router.get('/:id', verifyJWT, getApplicationById);
 
 export default router;

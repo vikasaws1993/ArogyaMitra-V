@@ -16,16 +16,16 @@ const router = Router();
 
 // Stream S3 file directly with inline MIME type
 // GET /api/s3/view?key=... or GET /api/s3/file?key=...
-router.get('/view', optionalJWT, viewS3Document);
-router.get('/file', optionalJWT, viewS3Document);
+router.get('/view', verifyJWT, viewS3Document);
+router.get('/file', verifyJWT, viewS3Document);
 
 // Get temporary presigned download URL
 // GET /api/s3/presigned-get-url?key=...
-router.get('/presigned-get-url', optionalJWT, getPresignedDownloadUrl);
+router.get('/presigned-get-url', verifyJWT, getPresignedDownloadUrl);
 
 // Generate short-lived presigned PUT URL for direct S3 upload
 // POST /api/s3/presign-upload
-router.post('/presign-upload', optionalJWT, createPresignedUploadUrl);
+router.post('/presign-upload', verifyJWT, createPresignedUploadUrl);
 
 // Verify S3 object existence via HeadObject and attach record to DB
 // POST /api/s3/confirm-upload
