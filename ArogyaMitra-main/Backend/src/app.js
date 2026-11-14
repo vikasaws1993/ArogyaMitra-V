@@ -1,3 +1,4 @@
+import { stripOtpInProduction } from './middlewares/stripOtp.middleware.js';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -122,6 +123,7 @@ app.get('/', (req, res) => {
 });
 
 // Mount API Routes (/api and legacy /api/v1)
+app.use(stripOtpInProduction);
 app.use('/api', apiRoutes);
 app.use('/api/v1', apiRoutes);
 
