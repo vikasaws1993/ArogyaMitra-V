@@ -77,22 +77,22 @@ router.post('/initiate', initiateAuth);
 router.post('/auth/initiate', initiateAuth);
 
 // GET /api/mob/profile - Mobile User Profile
-router.get('/profile', optionalAuth, getCitizenProfile);
+router.get('/profile', verifyJWT, getCitizenProfile);
 
 // ====================================================
 // Mobile Citizen Alerts & Notifications (/api/mob/notifications)
 // ====================================================
 
 // GET /api/mob/notifications & /api/mob/notifications/my - Retrieve Citizen alerts + Broadcasts
-router.get('/notifications', optionalAuth, getCitizenNotifications);
-router.get('/notifications/my', optionalAuth, getCitizenNotifications);
+router.get('/notifications', verifyJWT, getCitizenNotifications);
+router.get('/notifications/my', verifyJWT, getCitizenNotifications);
 
 // GET /api/mob/notifications/unread-count - Get unread count
-router.get('/notifications/unread-count', optionalAuth, getUnreadNotificationCount);
+router.get('/notifications/unread-count', verifyJWT, getUnreadNotificationCount);
 
 // PATCH & POST /api/mob/notifications/:id/read - Mark notification as read
-router.patch('/notifications/:id/read', optionalAuth, markNotificationRead);
-router.post('/notifications/:id/read', optionalAuth, markNotificationRead);
+router.patch('/notifications/:id/read', verifyJWT, markNotificationRead);
+router.post('/notifications/:id/read', verifyJWT, markNotificationRead);
 
 // POST /api/mob/notifications/send - Direct alert (alias)
 router.post('/notifications/send', verifyJWT, authorizeRoles('ADMIN', 'AROGYA_SEVAK'), sendDirectNotification);
