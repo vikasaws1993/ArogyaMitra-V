@@ -1,3 +1,4 @@
+import { verifyJWT, authorizeRoles } from '../middlewares/auth.middleware.js';
 import { Router } from 'express';
 import {
   sendCitizenOtp,
@@ -50,10 +51,10 @@ const optionalAuth = (req, res, next) => {
 router.get('/alerts', optionalAuth, getCitizenAlerts);
 
 // POST /api/mob/notifications/send - Trigger notification from Admin to Citizen
-router.post('/notifications/send', optionalAuth, sendDirectNotification);
+router.post('/notifications/send', verifyJWT, authorizeRoles('ADMIN', 'AROGYA_SEVAK'), sendDirectNotification);
 
 // POST /api/mob/notifications/broadcast - Broadcast notice to all citizens
-router.post('/notifications/broadcast', optionalAuth, broadcastNotification);
+router.post('/notifications/broadcast', verifyJWT, authorizeRoles('ADMIN'), broadcastNotification);
 
 // POST /api/mob/send-otp & /api/mob/auth/send-otp - Request OTP for Mobile Login
 router.post('/send-otp', otpRequestRateLimiter, sendCitizenOtp);
@@ -94,10 +95,10 @@ router.patch('/notifications/:id/read', optionalAuth, markNotificationRead);
 router.post('/notifications/:id/read', optionalAuth, markNotificationRead);
 
 // POST /api/mob/notifications/send - Direct alert (alias)
-router.post('/notifications/send', optionalAuth, sendDirectNotification);
+router.post('/notifications/send', verifyJWT, authorizeRoles('ADMIN', 'AROGYA_SEVAK'), sendDirectNotification);
 
 // POST /api/mob/notifications/broadcast - Broadcast alert (alias)
-router.post('/notifications/broadcast', optionalAuth, broadcastNotification);
+router.post('/notifications/broadcast', verifyJWT, authorizeRoles('ADMIN'), broadcastNotification);
 
 // GET /api/mob/mobile/:mobile - Get Citizen by Mobile
 router.get('/mobile/:mobile', getCitizenByMobile);
