@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# ArogyaMitra - server-side deploy script
+# Run on the EC2 instance as ssm-user (GitHub Actions triggers it through AWS SSM).
+# Manual run:  bash ~/ArogyaMitra-V/ArogyaMitra-main/deploy/deploy.sh
+set -euo pipefail
+
+REPO_DIR="${REPO_DIR:-$HOME/ArogyaMitra-V}"
+APP_DIR="$REPO_DIR/ArogyaMitra-main"
+BRANCH="${BRANCH:-main}"
+PM2_APP="${PM2_APP:-arogyamitra}"
+WEB_ROOT="${WEB_ROOT:-/var/www/arogyamitra}"                                       
+HEALTH_URL="${HEALTH_URL:-http://localhost:5000/api/v1/health}"     
+
+log() { echo "[deploy $(date '+%H:%M:%S')] $*"; }
+
+log "Updating code ($BRANCH)"
+cd "$REPO_DIR"
+git fetch --prune origin "$BRANCH"
+# .env and other ignored/untracked files are NOT touched by reset --hard
+git reset --hard "origin/$BRANCH"
+log "Now at commit: $(git rev-parse --short HEAD) - $(git log -1 --pretty=%s)"
+
+log "Backend: installing dependencies"
+cd "$APP_DIR/Backend"
+npm ci --no-audit --no-fund
+
+log "Backend: restarting pm2 app '$PM2_APP'"
+if pm2 describe "$PM2_APP" > /dev/null 2>&1; then
+  pm2 restart "$PM2_APP" --update-env
+else
+  pm2 start src/server.js --name "$PM2_APP"
+fi
+pm2 save
+
+log "Backend: health check"
+ok=0
+for i in $(seq 1 20); do
+  if curl -fsS "$HEALTH_URL" > /dev/null 2>&1; then ok=1; break; fi
+  sleep 3
+done
+if [ "$ok" -ne 1 ]; then
+  log "ERROR: backend health check failed. Last logs:"
+  pm2 logs "$PM2_APP" --lines 40 --nostream || true
+  exit 1
+fi
+log "Backend is healthy"
+
+log "Web portal: building"
+cd "$APP_DIR/WebFrontend"
+npm ci --no-audit --no-fund
+VITE_API_BASE_URL=/api npm run build
+
+log "Web portal: publishing to $WEB_ROOT"
+sudo mkdir -p "$WEB_ROOT"
+sudo find "$WEB_ROOT" -mindepth 1 -delete
+sudo cp -r dist/. "$WEB_ROOT/"
+
+log "Deploy finished successfully"
